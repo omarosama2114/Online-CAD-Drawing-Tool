@@ -1,462 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excedify Online CAD Tool</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .toolbar {
-            background-color: #f5f5f5;
-            padding: 10px 0;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .toolbar-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            padding: 0 20px;
-        }
-
-        .controls-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            border-right: 1px solid #ccc;
-        }
-
-        .controls-group:last-child {
-            border-right: none;
-        }
-
-        .controls-group h4 {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
-        .controls button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            width: 60px;
-            height: 60px;
-            font-size: 20px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .controls button:hover {
-            background-color: #e0e0e0;
-        }
-
-        .controls button i {
-            pointer-events: none;
-        }
-
-        .controls button span {
-            font-size: 12px;
-            margin-top: 5px;
-            pointer-events: none;
-        }
-
-        input[type="file"] {
-            cursor: pointer;
-        }
-
-        canvas {
-            border: 1px solid #ccc;
-            display: block;
-            margin: 20px auto;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title class="MainTitle">Excedify Online CAD Tool</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
     <div class="toolbar">
-        <div class="toolbar-title">Excedify Online CAD Tool</div>
-        <div class="controls">
-            <div class="controls-group">
-                <h4>Create</h4>
-                <button onclick="setMode('line')"><i class="fas fa-minus"></i><span>Line</span></button>
-                <button onclick="setMode('circle')"><i class="far fa-circle"></i><span>Circle</span></button>
-                <button onclick="setMode('arc')"><i class="fas fa-circle-notch"></i><span>Arc</span></button>
-                <button onclick="setMode('rectangle')"><i class="far fa-square"></i><span>Rectangle</span></button>
+      <div class="toolbar-title">Excedify Online CAD Tool</div>
+      <div class="controls">
+        <div class="controls-group">
+          <div class="ToolbarGroup">
+            <h4>Create</h4>
+            <button onclick="setMode('line')">
+              <i class="fas fa-minus"></i><span>Line</span>
+            </button>
+            <button onclick="setMode('circle')">
+              <i class="far fa-circle"></i><span>Circle</span>
+            </button>
+            <button onclick="setMode('arc')">
+              <i class="fas fa-circle-notch"></i><span>Arc</span>
+            </button>
+            <div id="arcInputs" style="display: none">
+              <label for="startAngle">Start Angle (in degrees):</label>
+              <input type="number" id="startAngle" value="0" />
+              <label for="endAngle">End Angle (in degrees):</label>
+              <input type="number" id="endAngle" value="180" />
             </div>
+            <button onclick="setMode('rectangle')">
+              <i class="far fa-square"></i><span>Rectangle</span>
+            </button>
 
-            <div class="controls-group">
-                <h4>Annotate</h4>
-                <button onclick="setMode('text')"><i class="fas fa-font"></i><span>Text</span></button>
-                <button onclick="setMode('arrowOne')"><i class="fas fa-long-arrow-alt-right"></i><span>Arrow</span></button>
-                <button onclick="setMode('arrowDouble')"><i class="fas fa-arrows-alt-h"></i><span>Double Arrow</span></button>
-            </div>
+            <h4>Annotate</h4>
+            <button onclick="setMode('text')">
+              <i class="fas fa-font"></i><span>Text</span>
+            </button>
+            <button onclick="setMode('arrowOne')">
+              <i class="fas fa-long-arrow-alt-right"></i><span>Arrow</span>
+            </button>
+            <button onclick="setMode('arrowDouble')">
+              <i class="fas fa-arrows-alt-h"></i><span>Arrow</span>
+            </button>
 
-            <div class="controls-group">
-                <h4>Modify</h4>
-                <button onclick="setMode('move')"><i class="fas fa-arrows-alt"></i><span>Move</span></button>
-                <button onclick="setMode('rotate')"><i class="fas fa-sync-alt"></i><span>Rotate</span></button>
-                <button onclick="setMode('trim')"><i class="fas fa-cut"></i><span>Trim</span></button>
-                <button onclick="setMode('erase')"><i class="fas fa-eraser"></i><span>Erase</span></button>
-            </div>
+            <h4>Modify</h4>
+            <button onclick="setMode('move')">
+              <i class="fas fa-arrows-alt"></i><span>Move</span>
+            </button>
+            <button onclick="setMode('rotate')">
+              <i class="fas fa-sync-alt"></i><span>Rotate</span>
+            </button>
+            <button onclick="setMode('erase')">
+              <i class="fas fa-eraser"></i><span>Erase</span>
+            </button>
 
-            <div class="controls-group">
-                <h4>Edit</h4>
-                <button onclick="undo()"><i class="fas fa-undo"></i><span>Undo</span></button>
-                <button onclick="redo()"><i class="fas fa-redo"></i><span>Redo</span></button>
-                <button onclick="clearCanvas()"><i class="fas fa-trash"></i><span>Clear</span></button>
-            </div>
-
-            <div class="controls-group">
-                <h4>Insert Background</h4>
-                <input type="file" id="uploadImage" accept="image/*" onchange="setBackground(event)" />
-            </div>
-
-            <div class="controls-group">
-                <h4>Format</h4>
-                <select id="lineStyle" onchange="setLineStyle(this.value)">
-                    <option value="default">Default</option>
-                    <option value="thin">Thin Continuous Line</option>
-                    <option value="dashed">Dashed Line</option>
-                    <option value="thin-dashed">Thin Dashed Line</option>
-                    <option value="center">Thin Center Line</option>
-                </select>
-            </div>
+            <h4>Edit</h4>
+            <button onclick="undo()">
+              <i class="fas fa-undo"></i><span>Undo</span>
+            </button>
+            <button onclick="redo()">
+              <i class="fas fa-redo"></i><span>Redo</span>
+            </button>
+            <button onclick="clearCanvas()">
+              <i class="fas fa-trash"></i><span>Clear</span>
+            </button>
+            <button onclick="downloadCanvas()">
+              <i class="fas fa-download"></i><span>Download</span>
+            </button>
+          </div>
         </div>
+
+        <div class="controls-group">
+          <div class="ToolbarGroup">
+            <h4>Insert Background</h4>
+            <input
+              type="file"
+              id="uploadImage"
+              accept="image/*"
+              onchange="setBackground(event)"
+              class="custom-upload-button"
+            />
+
+            <br />
+            <br />
+
+            <h4>Line Format</h4>
+            <select id="lineStyle" onchange="setLineStyle(this.value)">
+              <option value="default">Default</option>
+              <option value="thin">Thin Continuous Line</option>
+              <option value="dashed">Dashed Line</option>
+              <option value="thin-dashed">Thin Dashed Line</option>
+              <option value="center">Thin Center Line</option>
+            </select>
+
+            <br />
+            <br />
+            <br />
+            <div id="inputArea">
+              <h4>GD&T</h4>
+              <label for="symbolInput">Symbol: </label>
+              <select id="symbolInput">
+                <option value="⏤">⏤</option>
+                <option value="⏥">⏥</option>
+                <option value="○">○</option>
+                <option value="⌭">⌭</option>
+                <option value="⌒">⌒</option>
+                <option value="⌓">⌓</option>
+                <option value="∠">∠</option>
+                <option value="⟂">⟂</option>
+                <option value="∥">∥</option>
+                <option value="⌖">⌖</option>
+                <option value="◎">◎</option>
+                <option value="⌯">⌯</option>
+                <option value="↗">↗</option>
+                <option value="⌰">⌰</option>
+              </select>
+
+              <label for="toleranceInput">Tolerance: </label>
+              <select id="toleranceDiameter">
+                <option value="">No Diameter</option>
+                <option value="Ø">Ø</option>
+              </select>
+              <input
+                type="text"
+                id="toleranceValue"
+                placeholder="Enter value"
+                style="width: 100px"
+              />
+              <select id="toleranceModifier">
+                <option value="">No Modifier</option>
+                <option value="Ⓜ">Ⓜ</option>
+                <option value="Ⓛ">Ⓛ</option>
+              </select>
+
+              <label for="datumInput1">Datum: </label>
+              <input
+                type="text"
+                id="datumInput1"
+                maxlength="1"
+                style="width: 20px"
+              />
+              <input
+                type="text"
+                id="datumInput2"
+                maxlength="1"
+                style="width: 20px"
+              />
+              <input
+                type="text"
+                id="datumInput3"
+                maxlength="1"
+                style="width: 20px"
+              />
+
+              <button
+                class="gdtbutton"
+                onclick="drawOnCanvas()"
+                style="
+                  background: #702020;
+                  color: #fff;
+                  border: none;
+                  border-radius: 5px;
+                  margin-left: 18px;
+                  cursor: pointer;
+                  font-size: 14px;
+                  padding: 4px 10px;
+                  height: auto;
+                  width: auto;
+                "
+              >
+                Add
+              </button>
+              <br />
+              <br />
+              <br />
+              <h4>Surface Roughness</h4>
+              <label for="a-value">A: </label>
+              <input
+                type="text"
+                id="toleranceValue"
+                placeholder="Enter value"
+                style="width: 100px"
+              />
+
+              <label for="b-value">B: </label>
+              <input
+                type="text"
+                id="toleranceValue"
+                placeholder="Enter value"
+                style="width: 100px"
+              />
+
+              <label for="c-value">C: </label>
+              <input
+                type="text"
+                id="toleranceValue"
+                placeholder="Enter value"
+                style="width: 100px"
+              />
+
+              <label for="d-value">D: </label>
+              <input
+                type="text"
+                id="toleranceValue"
+                placeholder="Enter value"
+                style="width: 100px"
+              />
+
+              <label for="e-value">E: </label>
+              <input
+                type="text"
+                id="toleranceValue"
+                placeholder="Enter value"
+                style="width: 100px"
+              />
+
+              <button
+                class="gdtbutton"
+                onclick="drawSurfaceRoughness()"
+                style="
+                  background: #702020;
+                  color: #fff;
+                  border: none;
+                  border-radius: 5px;
+                  margin-left: 7px;
+                  cursor: pointer;
+                  font-size: 14px;
+                  padding: 4px 10px;
+                  height: auto;
+                  width: auto;
+                "
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
     <canvas id="cadCanvas" width="800" height="600"></canvas>
-    <script>
-        const canvas = document.getElementById('cadCanvas');
-        const ctx = canvas.getContext('2d');
-
-        let mode = '';
-        let isDrawing = false;
-        let isMoving = false;
-        let startX, startY;
-        let moveOffsetX = 0, moveOffsetY = 0;
-        let shapes = [];
-        let redoStack = [];
-        let currentLineStyle = 'default';
-        let selectedShape = null;
-        let backgroundImg = null; // Variable to store the background image
-
-        function setMode(selectedMode) {
-            mode = selectedMode;
-            selectedShape = null;
-        }
-
-        function setLineStyle(style) {
-            currentLineStyle = style;
-        }
-
-        function setBackground(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = new Image();
-                    img.onload = function () {
-                        backgroundImg = img; // Store the loaded image in memory
-                        redrawCanvas(); // Redraw the canvas to include the background image
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function clearCanvas() {
-            shapes = [];
-            redoStack = [];
-            backgroundImg = null;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function undo() {
-            if (shapes.length > 0) {
-                redoStack.push(shapes.pop());
-                redrawCanvas();
-            }
-        }
-
-        function redo() {
-            if (redoStack.length > 0) {
-                shapes.push(redoStack.pop());
-                redrawCanvas();
-            }
-        }
-
-        function applyLineStyle(style) {
-            if (style === 'thin') {
-                ctx.lineWidth = 1;
-                ctx.setLineDash([]);
-            } else if (style === 'dashed') {
-                ctx.lineWidth = 2;
-                ctx.setLineDash([10, 10]);
-            } else if (style === 'thin-dashed') {
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
-            } else if (style === 'center') {
-                ctx.lineWidth = 1;
-                ctx.setLineDash([15, 5, 5, 5]);
-            } else {
-                ctx.lineWidth = 2;
-                ctx.setLineDash([]);
-            }
-        }
-
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            if (mode === 'move' && selectedShape) {
-                isMoving = true;
-                moveOffsetX = x - selectedShape.startX;
-                moveOffsetY = y - selectedShape.startY;
-                return;
-            }
-
-            startX = x;
-            startY = y;
-            isDrawing = true;
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            if (mode === 'erase') {
-                if (isDrawing) {
-                    shapes = shapes.filter(shape => !isShapeHovered(shape, x, y));
-                    redrawCanvas();
-                }
-                return;
-            }
-
-            if (isMoving && selectedShape) {
-                const dx = x - moveOffsetX;
-                const dy = y - moveOffsetY;
-
-                if (selectedShape.type === 'line' || selectedShape.type === 'arrowOne' || selectedShape.type === 'arrowDouble') {
-                    const offsetX = dx - selectedShape.startX;
-                    const offsetY = dy - selectedShape.startY;
-                    selectedShape.startX += offsetX;
-                    selectedShape.startY += offsetY;
-                    selectedShape.endX += offsetX;
-                    selectedShape.endY += offsetY;
-                } else {
-                    selectedShape.startX = dx;
-                    selectedShape.startY = dy;
-                }
-                redrawCanvas();
-                return;
-            }
-
-            if (!isDrawing) {
-                let hoveredShape = shapes.find(shape => isShapeHovered(shape, x, y));
-                selectedShape = hoveredShape;
-                redrawCanvas(hoveredShape);
-                return;
-            }
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            redrawCanvas();
-
-            applyLineStyle(currentLineStyle);
-
-            if (mode === 'line') {
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(x, y);
-                ctx.stroke();
-            } else if (mode === 'rectangle') {
-                const width = x - startX;
-                const height = y - startY;
-                ctx.strokeRect(startX, startY, width, height);
-            } else if (mode === 'circle') {
-                const radius = Math.sqrt((x - startX) ** 2 + (y - startY) ** 2);
-                ctx.beginPath();
-                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
-                ctx.stroke();
-            } else if (mode === 'arc') {
-                const radius = Math.sqrt((x - startX) ** 2 + (y - startY) ** 2);
-                ctx.beginPath();
-                ctx.arc(startX, startY, radius, 0, Math.PI);
-                ctx.stroke();
-            } else if (mode === 'arrowOne') {
-                drawArrow(startX, startY, x, y, false);
-            } else if (mode === 'arrowDouble') {
-                drawArrow(startX, startY, x, y, true);
-            }
-        });
-
-        canvas.addEventListener('mouseup', (e) => {
-            if (isMoving) {
-                isMoving = false;
-                return;
-            }
-
-            if (!isDrawing) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            if (mode === 'line') {
-                shapes.push({ type: 'line', startX, startY, endX: x, endY: y, style: currentLineStyle });
-            } else if (mode === 'rectangle') {
-                const width = x - startX;
-                const height = y - startY;
-                shapes.push({ type: 'rectangle', startX, startY, width, height, style: currentLineStyle });
-            } else if (mode === 'circle') {
-                const radius = Math.sqrt((x - startX) ** 2 + (y - startY) ** 2);
-                shapes.push({ type: 'circle', startX, startY, radius, style: currentLineStyle });
-            } else if (mode === 'arc') {
-                const radius = Math.sqrt((x - startX) ** 2 + (y - startY) ** 2);
-                shapes.push({ type: 'arc', startX, startY, radius, style: currentLineStyle });
-            } else if (mode === 'arrowOne') {
-                shapes.push({ type: 'arrowOne', startX, startY, endX: x, endY: y, style: currentLineStyle });
-            } else if (mode === 'arrowDouble') {
-                shapes.push({ type: 'arrowDouble', startX, startY, endX: x, endY: y, style: currentLineStyle });
-            }
-
-            isDrawing = false;
-            redrawCanvas();
-        });
-
-        function drawArrow(x1, y1, x2, y2, doubleArrow) {
-            const arrowLength = 10;
-            const angle = Math.atan2(y2 - y1, x2 - x1);
-
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(x2, y2);
-            ctx.lineTo(x2 - arrowLength * Math.cos(angle - Math.PI / 6), y2 - arrowLength * Math.sin(angle - Math.PI / 6));
-            ctx.lineTo(x2 - arrowLength * Math.cos(angle + Math.PI / 6), y2 - arrowLength * Math.sin(angle + Math.PI / 6));
-            ctx.lineTo(x2, y2);
-            ctx.fill();
-
-            if (doubleArrow) {
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x1 + arrowLength * Math.cos(angle - Math.PI / 6), y1 + arrowLength * Math.sin(angle - Math.PI / 6));
-                ctx.lineTo(x1 + arrowLength * Math.cos(angle + Math.PI / 6), y1 + arrowLength * Math.sin(angle + Math.PI / 6));
-                ctx.lineTo(x1, y1);
-                ctx.fill();
-            }
-        }
-
-        function isShapeHovered(shape, x, y) {
-            if (shape.type === 'line' || shape.type === 'arrowOne' || shape.type === 'arrowDouble') {
-                const dx = shape.endX - shape.startX;
-                const dy = shape.endY - shape.startY;
-                const len = Math.sqrt(dx * dx + dy * dy);
-                const projection = ((x - shape.startX) * dx + (y - shape.startY) * dy) / len;
-                const closestX = shape.startX + (projection / len) * dx;
-                const closestY = shape.startY + (projection / len) * dy;
-                const dist = Math.sqrt((x - closestX) ** 2 + (y - closestY) ** 2);
-                return dist < 5;
-            } else if (shape.type === 'rectangle') {
-                return x >= shape.startX && x <= shape.startX + shape.width && y >= shape.startY && y <= shape.startY + shape.height;
-            } else if (shape.type === 'circle') {
-                const dx = x - shape.startX;
-                const dy = y - shape.startY;
-                return Math.sqrt(dx * dx + dy * dy) <= shape.radius;
-            } else if (shape.type === 'arc') {
-                const dx = x - shape.startX;
-                const dy = y - shape.startY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                return dist >= shape.radius - 5 && dist <= shape.radius + 5;
-            }
-            return false;
-        }
-
-        function redrawCanvas(hoveredShape = null) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw the background image if it exists
-            if (backgroundImg) {
-                ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-            }
-
-            for (const shape of shapes) {
-                if (shape === hoveredShape) {
-                    ctx.strokeStyle = 'blue';
-                } else {
-                    ctx.strokeStyle = 'black';
-                }
-
-                applyLineStyle(shape.style);
-
-                if (shape.type === 'line') {
-                    ctx.beginPath();
-                    ctx.moveTo(shape.startX, shape.startY);
-                    ctx.lineTo(shape.endX, shape.endY);
-                    ctx.stroke();
-                } else if (shape.type === 'rectangle') {
-                    ctx.strokeRect(shape.startX, shape.startY, shape.width, shape.height);
-                } else if (shape.type === 'circle') {
-                    ctx.beginPath();
-                    ctx.arc(shape.startX, shape.startY, shape.radius, 0, 2 * Math.PI);
-                    ctx.stroke();
-                } else if (shape.type === 'arc') {
-                    ctx.beginPath();
-                    ctx.arc(shape.startX, shape.startY, shape.radius, 0, Math.PI);
-                    ctx.stroke();
-                } else if (shape.type === 'arrowOne' || shape.type === 'arrowDouble') {
-                    drawArrow(shape.startX, shape.startY, shape.endX, shape.endY, shape.type === 'arrowDouble');
-                }
-            }
-        }
-
-        // Trim functionality
-        function trimLine(line, x, y) {
-            const dx = line.endX - line.startX;
-            const dy = line.endY - line.startY;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            const projection = ((x - line.startX) * dx + (y - line.startY) * dy) / len;
-            if (projection >= 0 && projection <= len) {
-                line.endX = line.startX + (dx * projection) / len;
-                line.endY = line.startY + (dy * projection) / len;
-                return true;
-            }
-            return false;
-        }
-
-        function trim() {
-            if (selectedShape && selectedShape.type === 'line') {
-                const rect = canvas.getBoundingClientRect();
-                canvas.addEventListener('click', function handleClick(e) {
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    if (trimLine(selectedShape, x, y)) {
-                        redrawCanvas();
-                        canvas.removeEventListener('click', handleClick);
-                    }
-                });
-            }
-        }
-    </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

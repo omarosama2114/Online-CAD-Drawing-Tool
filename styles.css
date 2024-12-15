@@ -191,3 +191,151 @@ button:hover {
 .gdtbutton:hover {
   background: #0056b3;
 }
+
+.custom-upload-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.custom-upload-button:hover {
+  background-color: #45a049; 
+}
+
+.custom-upload-button:active {
+  background-color: #3e8e41;
+}
+
+#uploadImage {
+  display: none; /* Hide the default file input */
+}
+
+label.custom-upload-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #702020; /* Blue background */
+  color: white;
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+label.custom-upload-label:hover {
+  background-color: #4b1e1e; /* Darker blue on hover */
+}
+
+label.custom-upload-label:active {
+  background-color: #4b1e1e; /* Even darker blue on click */
+}
+
+.custom-dropdown select {
+  width: 65%; /* Adjust width to fit the container */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  appearance: none; /* Removes default dropdown arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.custom-dropdown-x select {
+  width: 20%; /* Adjust width to fit the container */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  appearance: none; /* Removes default dropdown arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.custom-dropdown {
+  position: relative;
+  max-width: 300px; /* Adjust as needed */
+  margin: 10px 0;
+}
+
+.custom-dropdown select option {
+  font-size: 16px;
+  padding: 5px;
+  background-color: white; /* Keep options background white */
+}
+
+.custom-dropdown select:hover {
+  border-color: #666;
+}
+
+.custom-dropdown h4 {
+  font-family: Arial, sans-serif;
+  margin-bottom: 8px;
+}
+
+.gd-t-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between elements */
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+}
+
+.gd-t-container label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.gd-t-container select,
+.gd-t-container input {
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: auto;
+}
+
+.gd-t-container input[type="text"] {
+  text-align: center;
+}
+
+.gd-t-container .gdtbutton {
+  background: #702020;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 15px;
+}
+
+.gd-t-container .gdtbutton:hover {
+  background: #a03030;
+}
+
+.gd-t-container .custom-dropdown select {
+  width: auto;
+}

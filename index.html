@@ -16,101 +16,115 @@
       <div class="controls">
         <div class="controls-group">
           <div class="ToolbarGroup">
-            <h4>Create</h4>
-            <button onclick="setMode('line')">
-              <i class="fas fa-minus"></i><span>Line</span>
-            </button>
-            <button onclick="setMode('circle')">
-              <i class="far fa-circle"></i><span>Circle</span>
-            </button>
-            <button onclick="setMode('arc')">
-              <i class="fas fa-circle-notch"></i><span>Arc</span>
-            </button>
-            <div id="arcInputs" style="display: none">
-              <label for="startAngle">Start Angle (in degrees):</label>
-              <input type="number" id="startAngle" value="0" />
-              <label for="endAngle">End Angle (in degrees):</label>
-              <input type="number" id="endAngle" value="180" />
+            <div class="group">
+              <h4>Create</h4>
+              <div class="buttons">
+                <button onclick="setMode('line')">
+                  <i class="fas fa-minus"></i><span>Line</span>
+                </button>
+                <button onclick="setMode('circle')">
+                  <i class="far fa-circle"></i><span>Circle</span>
+                </button>
+                <button onclick="setMode('arc')">
+                  <i class="fas fa-circle-notch"></i><span>Arc</span>
+                </button>
+                <div id="arcInputs" style="display: none">
+                  <label for="startAngle">Start Angle (in degrees):</label>
+                  <input type="number" id="startAngle" value="0" />
+                  <label for="endAngle">End Angle (in degrees):</label>
+                  <input type="number" id="endAngle" value="180" />
+                </div>
+                <button onclick="setMode('rectangle')">
+                  <i class="far fa-square"></i><span>Rectangle</span>
+                </button>
+                <button onclick="setMode('draw')">
+                  <i class="fas fa-pencil-alt"></i><span>Draw</span>
+                </button>
+              </div>
             </div>
-            <button onclick="setMode('rectangle')">
-              <i class="far fa-square"></i><span>Rectangle</span>
-            </button>
-
-            <h4>Annotate</h4>
-            <button onclick="setMode('text')">
-              <i class="fas fa-font"></i><span>Text</span>
-            </button>
-            <button onclick="setMode('arrowOne')">
-              <i class="fas fa-long-arrow-alt-right"></i><span>Arrow</span>
-            </button>
-            <button onclick="setMode('arrowDouble')">
-              <i class="fas fa-arrows-alt-h"></i><span>Arrow</span>
-            </button>
-
-            <h4>Modify</h4>
-            <button onclick="setMode('move')">
-              <i class="fas fa-arrows-alt"></i><span>Move</span>
-            </button>
-            <button onclick="setMode('rotate')">
-              <i class="fas fa-sync-alt"></i><span>Rotate</span>
-            </button>
-            <button onclick="setMode('erase')">
-              <i class="fas fa-eraser"></i><span>Erase</span>
-            </button>
-
-            <h4>Edit</h4>
-            <button onclick="undo()">
-              <i class="fas fa-undo"></i><span>Undo</span>
-            </button>
-            <button onclick="redo()">
-              <i class="fas fa-redo"></i><span>Redo</span>
-            </button>
-            <button onclick="clearCanvas()">
-              <i class="fas fa-trash"></i><span>Clear</span>
-            </button>
-            <button onclick="downloadCanvas()">
-              <i class="fas fa-download"></i><span>Download</span>
-            </button>
+            <div class="group">
+              <h4>Annotate</h4>
+              <div class="buttons">
+                <button onclick="setMode('text')">
+                  <i class="fas fa-font"></i><span>Text</span>
+                </button>
+                <button onclick="setMode('arrowOne')">
+                  <i class="fas fa-long-arrow-alt-right"></i><span>Arrow</span>
+                </button>
+                <button onclick="setMode('arrowDouble')">
+                  <i class="fas fa-arrows-alt-h"></i><span>Arrow</span>
+                </button>
+              </div>
+            </div>
+            <div class="group">
+              <h4>Modify</h4>
+              <div class="buttons">
+                <button onclick="setMode('pan')">
+                  <i class="fas fa-mouse-pointer"></i><span>Pan</span>
+                </button>
+                <button onclick="setMode('move')">
+                  <i class="fas fa-arrows-alt"></i><span>Move</span>
+                </button>
+                <button onclick="setMode('rotate')">
+                  <i class="fas fa-sync-alt"></i><span>Rotate</span>
+                </button>
+                <button onclick="setMode('erase')">
+                  <i class="fas fa-eraser"></i><span>Erase</span>
+                </button>
+              </div>
+            </div>
+            <div class="group">
+              <h4>Edit</h4>
+              <div class="buttons">
+                <button onclick="undo()">
+                  <i class="fas fa-undo"></i><span>Undo</span>
+                </button>
+                <button onclick="redo()">
+                  <i class="fas fa-redo"></i><span>Redo</span>
+                </button>
+                <button onclick="clearCanvas()">
+                  <i class="fas fa-trash"></i><span>Clear</span>
+                </button>
+                <button onclick="downloadCanvas()">
+                  <i class="fas fa-download"></i><span>Download</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="controls-group">
           <div class="ToolbarGroup">
-            <h4>Insert Background</h4>
-            <label for="uploadImage" class="custom-upload-label"
-              >Upload Image <i class="fas fa-upload"></i>
-            </label>
-            <input
-              type="file"
-              id="uploadImage"
-              accept="image/*"
-              onchange="setBackground(event)"
-              class="custom-upload-button"
-            />
-
-            <br />
-            <br />
-            <br />
-            <br />
-
-            <h4>Line Format</h4>
-            <div class="custom-dropdown">
-              <select id="lineStyle" onchange="setLineStyle(this.value)">
-                <option value="default">Continous Line</option>
-                <option value="thin">Continuous Line (Thin)</option>
-                <option value="dashed">Dashed Line</option>
-                <option value="thin-dashed">Dashed Line (Thin)</option>
-                <option value="center">Center Line</option>
-              </select>
+            <div class="group">
+              <h4>Insert Background</h4>
+              <label for="uploadImage" class="custom-upload-label"
+                >Upload Image <i class="fas fa-upload"></i>
+              </label>
+              <input
+                type="file"
+                id="uploadImage"
+                accept="image/*"
+                onchange="setBackground(event)"
+                class="custom-upload-button"
+              />
             </div>
 
-            <br />
-            <br />
-            <br />
+            <div class="group">
+              <h4>Line Format</h4>
+              <div class="custom-dropdown" style="margin-top: 0px">
+                <select id="lineStyle" onchange="setLineStyle(this.value)">
+                  <option value="default">Continous Line</option>
+                  <option value="thin">Continuous Line (Thin)</option>
+                  <option value="dashed">Dashed Line</option>
+                  <option value="thin-dashed">Dashed Line (Thin)</option>
+                  <option value="center">Center Line</option>
+                </select>
+              </div>
+            </div>
 
-            <div id="inputArea">
+            <div id="inputArea" style="margin-left: 100px">
               <h4>GD&T Feature Control Frame</h4>
-              <div class="gd-t-container">
+              <div class="gd-t-container" style="margin-top: -8px">
                 <label for="symbolInput">Symbol: </label>
                 <select id="symbolInput">
                   <option value="⏤">⏤</option>
@@ -195,7 +209,12 @@
       </div>
     </div>
 
-    <canvas id="cadCanvas" width="800" height="600"></canvas>
+    <canvas
+      id="cadCanvas"
+      width="1000"
+      height="625"
+      style="border: 1px solid black"
+    ></canvas>
     <script src="script.js"></script>
   </body>
 </html>

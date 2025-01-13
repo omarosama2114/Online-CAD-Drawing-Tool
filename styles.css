@@ -36,10 +36,28 @@ body {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.ToolbarGroup {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
 .controls-group h4 {
   margin: 10px 0;
   font-size: 18px;
   font-weight: bold;
+}
+
+h4 {
+  margin: 10px 0 0;
+  text-align: center;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 50px;
 }
 
 .controls button {
@@ -107,7 +125,7 @@ canvas {
 }
 
 button {
-  margin-right: 10px;
+  margin-right: 1px;
   padding: 12px 20px;
   background-color: #007bff;
   color: #702020;
@@ -122,6 +140,20 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+
+.button-group {
+  display: flex;
+  gap: 40px; /* Space between buttons */
+}
+
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
 .gdt-tool {
@@ -241,7 +273,7 @@ label.custom-upload-label:active {
 }
 
 .custom-dropdown select {
-  width: 65%; /* Adjust width to fit the container */
+  width: 110%; /* Adjust width to fit the container */
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;

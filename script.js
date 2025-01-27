@@ -40,6 +40,7 @@ let selectedShape = null;
 let selectedRotateShape = null;
 let backgroundImg = null; 
 
+setfile1();
 
 function setMode(selectedMode) {
   mode = selectedMode;
@@ -114,6 +115,29 @@ function applyLineStyle(style) {
 
 function setLineStyle(style) {
   currentLineStyle = style;
+}
+
+function setfile1() {
+  // Create an input element dynamically
+  const input = document.createElement('input');
+  input.type = 'file';
+
+  // Use fetch to get the image as a blob
+  fetch('Template.png')
+    .then(response => response.blob()) // Convert response to Blob
+    .then(blob => {
+      // Create a File object to mimic user upload behavior
+      const file = new File([blob], 'Template.png', { type: 'image/png' });
+
+      // Manually trigger the change event with the file
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+
+      // Call the existing setBackground function with the simulated input event
+      setBackground({ target: input });
+    })
+    .catch(error => console.error('Error loading image:', error));
 }
 
 function setBackground(event) {
@@ -266,6 +290,7 @@ function isShapeHovered(shape, x, y) {
           return true;
         }
       }
+      break;
 
     case "line":
     case "arrowOne":
@@ -340,6 +365,44 @@ function isShapeHovered(shape, x, y) {
         y <= centerY + 40 / 2     // Top edge
       );
 
+    case "sr":
+      const centerS = shape.x;  // Shift to center horizontally
+      const centerR = shape.y;  // Shift to center vertically
+
+      return (
+        x >= centerS - 60 / 2 && 
+        x <= centerS + 60 / 2 &&  // Right edge
+        y >= centerR - 20 / 2 && 
+        y <= centerR + 20 / 2     // Top edge
+      );  
+
+    case "datum":
+      return isHoveringOverDatum(x, y, shape);  
+
+    case "circleDatum":
+      // Scale the shape's position and radius
+    const shapeX = shape.x;
+    const shapeY = shape.y;
+    const radius = 20 * scale; // Scaled radius of the circle
+
+    // Calculate the distance between the mouse position and the circle's center
+    const distanceC = Math.sqrt((x - shapeX) ** 2 + (y - shapeY) ** 2);
+
+    // Return true if the distance is less than or equal to the circle's radius
+    return distanceC <= radius; 
+
+    case "bubble":
+      // Scale the shape's position and radius
+    const shapeA = shape.x;
+    const shapeB = shape.y;
+    const radiusA = 10 * scale; // Scaled radius of the circle
+
+    // Calculate the distance between the mouse position and the circle's center
+    const distanceA = Math.sqrt((x - shapeA) ** 2 + (y - shapeB) ** 2);
+
+    // Return true if the distance is less than or equal to the circle's radius
+    return distanceA <= radiusA; 
+
     case "text":
       // Check if the mouse is within the text bounding box
       const textWidth = ctx.measureText(shape.text).width + 10;
@@ -360,6 +423,118 @@ function isShapeHovered(shape, x, y) {
     default:
       return false;
   }
+}
+
+function isHoveringOverDatum(x, y, shape) {
+  const direction = shape.direction || 'up'; // Direction of the shape ('up', 'down', 'left', 'right')
+
+  // Sizes
+  const rectangleWidth = 25;
+  const rectangleHeight = 30;
+  const triangleHeight = 15;
+  const triangleWidth = 20;
+  const lineGap = 10;
+
+  // Determine the rectangle and triangle positions based on the direction
+  let rectX, rectY, triPoints;
+
+  if (direction === 'up') {
+    const rectTopY = shape.y - triangleHeight - lineGap - rectangleHeight;
+    rectX = shape.x - rectangleWidth / 2;
+    rectY = rectTopY;
+
+    triPoints = [
+      { x: shape.x, y: shape.y - triangleHeight }, // Top of triangle
+      { x: shape.x - triangleWidth / 2, y: shape.y }, // Bottom-left
+      { x: shape.x + triangleWidth / 2, y: shape.y }, // Bottom-right
+    ];
+  } else if (direction === 'down') {
+    const rectTopY = shape.y + triangleHeight + lineGap;
+    rectX = shape.x - rectangleWidth / 2;
+    rectY = rectTopY;
+
+    triPoints = [
+      { x: shape.x, y: shape.y + triangleHeight }, // Bottom of triangle
+      { x: shape.x - triangleWidth / 2, y: shape.y }, // Top-left
+      { x: shape.x + triangleWidth / 2, y: shape.y }, // Top-right
+    ];
+  } else if (direction === 'left') {
+    const rectLeftX = shape.x - triangleWidth - lineGap - rectangleWidth;
+    rectX = rectLeftX;
+    rectY = shape.y - rectangleHeight / 2;
+
+    triPoints = [
+      { x: shape.x - triangleWidth, y: shape.y }, // Left of triangle
+      { x: shape.x, y: shape.y - triangleHeight / 2 }, // Top-right
+      { x: shape.x, y: shape.y + triangleHeight / 2 }, // Bottom-right
+    ];
+  } else if (direction === 'right') {
+    const rectLeftX = shape.x + triangleWidth + lineGap;
+    rectX = rectLeftX;
+    rectY = shape.y - rectangleHeight / 2;
+
+    triPoints = [
+      { x: shape.x + triangleWidth, y: shape.y }, // Right of triangle
+      { x: shape.x, y: shape.y - triangleHeight / 2 }, // Top-left
+      { x: shape.x, y: shape.y + triangleHeight / 2 }, // Bottom-left
+    ];
+  }
+
+  // Hover detection for the rectangle
+  const isHoveringRectangle = (
+    x >= rectX &&
+    x <= rectX + rectangleWidth &&
+    y >= rectY &&
+    y <= rectY + rectangleHeight
+  );
+
+  // Hover detection for the triangle (use barycentric coordinates for triangle detection)
+  function isPointInTriangle(px, py, p1, p2, p3) {
+    const area = 0.5 * (-p2.y * p3.x + p1.y * (-p2.x + p3.x) + p1.x * (p2.y - p3.y) + p2.x * p3.y);
+    const s = 1 / (2 * area) * (p1.y * p3.x - p1.x * p3.y + (p3.y - p1.y) * px + (p1.x - p3.x) * py);
+    const t = 1 / (2 * area) * (p1.x * p2.y - p1.y * p2.x + (p1.y - p2.y) * px + (p2.x - p1.x) * py);
+
+    return s >= 0 && t >= 0 && 1 - s - t >= 0;
+  }
+
+  const isHoveringTriangle = isPointInTriangle(
+    x,
+    y,
+    triPoints[0],
+    triPoints[1],
+    triPoints[2]
+  );
+
+  // Hover detection for the line (simplified as a rectangle for tolerance)
+  const lineWidth = 2; // Line width for hover detection
+  let isHoveringLine = false;
+
+  if (direction === 'up' || direction === 'down') {
+    const lineX = shape.x - lineWidth / 2;
+    const lineTopY = direction === 'up' ? rectY + rectangleHeight : shape.y;
+    const lineBottomY = direction === 'up' ? shape.y - triangleHeight : rectY;
+
+    isHoveringLine = (
+      x >= lineX &&
+      x <= lineX + lineWidth &&
+      y >= lineTopY &&
+      y <= lineBottomY
+    );
+  } else if (direction === 'left' || direction === 'right') {
+    const lineY = shape.y - lineWidth / 2;
+    const lineLeftX = direction === 'left' ? rectX + rectangleWidth : shape.x;
+    const lineRightX = direction === 'left' ? shape.x - triangleWidth : rectX;
+
+    isHoveringLine = (
+      y >= lineY &&
+      y <= lineY + lineWidth &&
+      x >= lineLeftX &&
+      x <= lineRightX
+    );
+  }
+
+  // Return true if hovering over any part of the shape
+  return isHoveringRectangle || isHoveringTriangle || isHoveringLine;
 }
 
 function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
@@ -470,7 +645,6 @@ function drawTextOnCanvas(x, y, text) {
           drawHeight = drawWidth / imgAspectRatio; // Scale height proportionally
       }
 
-
       ctx.drawImage(
           backgroundImg ,
           0, // Center horizontally
@@ -519,7 +693,7 @@ function drawTextOnCanvas(x, y, text) {
           if (shape.rotation !== 0) { 
               if(hoveredShape === shape) {
                 ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Highlight the rectangle
-                drawRotatedRect( scaledStartX, scaledStartY, scaledWidth, scaledHeight, shape.rotation, true);
+                drawRotatedRect(scaledStartX, scaledStartY, scaledWidth, scaledHeight, shape.rotation, true);
               } else {
                 ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Highlight the rectangle
                 drawRotatedRect(scaledStartX, scaledStartY, scaledWidth, scaledHeight, shape.rotation, false);
@@ -537,11 +711,22 @@ function drawTextOnCanvas(x, y, text) {
         case "circle":
           ctx.arc(scaledStartX, scaledStartY, scaledRadius, 0, 2 * Math.PI);
           ctx.stroke();
+          if(hoveredShape === shape) {
+            ctx.save();
+            drawCenterCross(scaledStartX, scaledStartY, scaledRadius);
+            ctx.restore();
+          }
           break;
   
         case "arc":
           ctx.arc(scaledStartX, scaledStartY, scaledRadius, shape.startAngle, shape.endAngle);
           ctx.stroke();
+          if(hoveredShape === shape) {
+            ctx.save();
+            drawCenterCross(scaledStartX, scaledStartY, scaledRadius);
+            ctx.lineWidth = 1; // Reset to default thickness
+            //ctx.restore();
+          }
           break;
   
         case "arrowOne":
@@ -559,7 +744,29 @@ function drawTextOnCanvas(x, y, text) {
           }
           drawGDAndTShape(shape); // Assuming this is handled with the proper scale adjustments
           break;
-  
+        case "datum":
+          drawDatum(shape);  
+          break;  
+        case "circleDatum":
+          if(hoveredShape === shape){
+            drawCircleDatum(shape);  
+          }
+          drawCircleDatum(shape);
+          break;  
+        case "bubble":
+          if(hoveredShape === shape){
+            drawBubble(shape);  
+          }
+          drawBubble(shape);
+          break;
+        case "sr":
+          if(hoveredShape === shape){
+            drawSurfaceRoughness(shape); 
+            drawSurfaceRoughness(shape);
+            drawSurfaceRoughness(shape); 
+          }
+          drawSurfaceRoughness(shape); 
+          break;      
         case "text":
           const scaledFontSize = 16 * scale; // Scale font size
           ctx.font = `${scaledFontSize}px Arial`;
@@ -624,6 +831,269 @@ function drawTextOnCanvas(x, y, text) {
 
     ctx.restore();
 }
+
+function drawSurfaceRoughness(shape) {
+  let x = shape.x;
+  let y = shape.y;
+  let a = shape.a;
+  let b = shape.b;
+  let c = shape.c;
+  let d = shape.d;
+
+  let variant = shape.variant;
+
+  x = x * scale;
+  y = y * scale;
+
+  const height = 15 * scale;      // Total height of the symbol
+  const width = 25 * scale;       // Total width between the outer points  
+
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "black";
+  ctx.lineWidth = 1;
+  ctx.font = `${10 * scale}px Arial`;  // Set font size and type
+
+  // Base pattern for all variants - draw the angled line from bottom
+  ctx.beginPath();
+  ctx.moveTo(x, y + height / 2);                      // Start at bottom point
+  ctx.lineTo(x + width / 2, y - height / 2 - (20 * scale));  // Right leg (flipped)
+  ctx.moveTo(x, y + height / 2);                      // Back to bottom
+  ctx.lineTo(x - width / 2, y - height / 2);           // Left leg (flipped)
+
+  // Add horizontal line at the end of the right leg
+  ctx.moveTo(x + width / 2, y - height / 2 - (20 * scale));   // Start at the end of right leg
+  ctx.lineTo(x + width / 2 + (30 * scale), y - height / 2 - (20 * scale)); // Extend horizontally to the right
+
+  ctx.stroke();
+
+  // Add fixed values at points a, b, c, d
+  ctx.fillText(a, x - (6 * scale), y - (10*scale));              // Position for "a"
+  ctx.fillText(b, x + width / 2 + (5 * scale), y - height - (18 * scale));  // Position for "b"
+  ctx.fillText(c, x + width / 2 + (5 * scale), y - height);    // Position for "c"
+  ctx.fillText(d, x + width / 2, y + (5 * scale));   // Position for "d"
+
+  if (variant === 'B') {
+    // Add horizontal line at bottom
+    ctx.beginPath();
+    ctx.moveTo(x - width / 2, y - (8 * scale));
+    ctx.lineTo(x + width / 2 - (7 * scale), y - (8 * scale));
+    ctx.stroke();
+  } else if (variant === 'C') {
+    // Add circle at bottom
+    const circleY = y + height - (19 * scale);
+    ctx.beginPath();
+    ctx.arc(x - (2 * scale), circleY, (5 * scale), 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+}
+
+
+function drawDatum(shape) {
+  let x = shape.x; // Click point X
+  let y = shape.y; // Click point Y
+  let s = shape.symbolD; // Symbol text
+  let direction = shape.direction || 'up'; // Direction ('up', 'down', 'left', 'right')
+
+  x = x * scale;
+  y = y * scale; 
+
+  // Adjusted sizes
+  const rectangleWidth = 20 * scale; // Rectangle width
+  const rectangleHeight = 20 * scale; // Rectangle height
+  const triangleHeight = 12 * scale; // Triangle height
+  const triangleWidth = 16 * scale; // Triangle width
+  const lineGap = 25 * scale; // Gap between rectangle and triangle
+
+  ctx.fillStyle = 'black';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 1;
+
+  if (direction === 'up') {
+    // Offset for 'up' direction
+    const adjustedY = y - triangleHeight - lineGap - rectangleHeight;
+
+    // Draw triangle
+    ctx.beginPath();
+    ctx.moveTo(x, y - triangleHeight); // Top of triangle
+    ctx.lineTo(x - triangleWidth / 2, y); // Bottom-left
+    ctx.lineTo(x + triangleWidth / 2, y); // Bottom-right
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw vertical line
+    ctx.beginPath();
+    ctx.moveTo(x, adjustedY + rectangleHeight);
+    ctx.lineTo(x, y - triangleHeight);
+    ctx.stroke();
+
+    // Draw rectangle
+    ctx.beginPath();
+    ctx.rect(x - rectangleWidth / 2, adjustedY, rectangleWidth, rectangleHeight);
+    ctx.stroke();
+
+    // Draw text
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s, x, adjustedY + rectangleHeight / 2);
+  } else if (direction === 'down') {
+    // Offset for 'down' direction
+    const adjustedY = y + triangleHeight + lineGap;
+
+    // Draw triangle
+    ctx.beginPath();
+    ctx.moveTo(x, y + triangleHeight); // Bottom of triangle
+    ctx.lineTo(x - triangleWidth / 2, y); // Top-left
+    ctx.lineTo(x + triangleWidth / 2, y); // Top-right
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw vertical line
+    ctx.beginPath();
+    ctx.moveTo(x, y + triangleHeight);
+    ctx.lineTo(x, adjustedY);
+    ctx.stroke();
+
+    // Draw rectangle
+    ctx.beginPath();
+    ctx.rect(x - rectangleWidth / 2, adjustedY, rectangleWidth, rectangleHeight);
+    ctx.stroke();
+
+    // Draw text
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s, x, adjustedY + rectangleHeight / 2);
+  } else if (direction === 'left') {
+    // Offset for 'left' direction
+    const adjustedX = x - triangleWidth - lineGap - rectangleWidth;
+
+    // Draw triangle
+    ctx.beginPath();
+    ctx.moveTo(x - triangleWidth, y); // Left of triangle
+    ctx.lineTo(x, y - triangleHeight / 2); // Top-right
+    ctx.lineTo(x, y + triangleHeight / 2); // Bottom-right
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw horizontal line
+    ctx.beginPath();
+    ctx.moveTo(x - triangleWidth, y);
+    ctx.lineTo(adjustedX + rectangleWidth, y);
+    ctx.stroke();
+
+    // Draw rectangle
+    ctx.beginPath();
+    ctx.rect(adjustedX, y - rectangleHeight / 2, rectangleWidth, rectangleHeight);
+    ctx.stroke();
+
+    // Draw text
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s, adjustedX + rectangleWidth / 2, y);
+  } else if (direction === 'right') {
+    // Offset for 'right' direction
+    const adjustedX = x + triangleWidth + lineGap;
+
+    // Draw triangle
+    ctx.beginPath();
+    ctx.moveTo(x + triangleWidth, y); // Right of triangle
+    ctx.lineTo(x, y - triangleHeight / 2); // Top-left
+    ctx.lineTo(x, y + triangleHeight / 2); // Bottom-left
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw horizontal line
+    ctx.beginPath();
+    ctx.moveTo(x + triangleWidth, y);
+    ctx.lineTo(adjustedX, y);
+    ctx.stroke();
+
+    // Draw rectangle
+    ctx.beginPath();
+    ctx.rect(adjustedX, y - rectangleHeight / 2, rectangleWidth, rectangleHeight);
+    ctx.stroke();
+
+    // Draw text
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s, adjustedX + rectangleWidth / 2, y);
+  }
+}
+
+function drawCircleDatum(shape) {
+  let x = shape.x * scale; // Scaled X position
+  let y = shape.y * scale; // Scaled Y position
+  const radius = 20 * scale; // Scaled radius
+
+  let symbol = shape.symbol;
+  let dimension = shape.dimension;
+
+  ctx.save(); // Save the current context state
+
+  // Draw the circle
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI); // Full circle
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 1; // Scale the line width
+  ctx.stroke();
+
+  // Draw the dividing line
+  ctx.beginPath();
+  ctx.moveTo(x - radius, y); // Left edge of the circle
+  ctx.lineTo(x + radius, y); // Right edge of the circle
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 1; // Scale the line width
+  ctx.stroke();
+
+  // Add the top text (filler number)
+  const topText = dimension; // Replace with the actual number
+  ctx.font = `${14 * scale}px Arial`; // Scaled font size
+  ctx.fillStyle = 'black';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom'; // Position at the top half
+  ctx.fillText(topText, x, y - 4);
+
+  // Add the bottom text (filler letter)
+  const bottomText = symbol; // Replace with the actual letter
+  ctx.textBaseline = 'top'; // Position at the bottom half
+  ctx.fillText(bottomText, x, y + 4);
+
+  ctx.restore(); // Restore the context state
+}
+
+function drawBubble(shape) {
+  // Extract properties
+  let x = shape.x; // Center X
+  let y = shape.y; // Center Y
+  let number = shape.number || '1'; // Default number inside the circle
+
+  // Adjust for scaling
+  x = x * scale;
+  y = y * scale;
+
+  // Circle properties
+  const radius = 10 * scale; // Circle radius (scaled)
+
+  // Draw circle
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI); // Circle outline
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Draw number inside circle
+  ctx.font = `${11 * scale}px Arial`; // Adjust font size based on scale
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'black';
+  ctx.fillText(number, x, y); // Number at the circle center
+}
+
+
+
 
 //   function drawRotatedRect(x, y, width, height, angleInDegrees, isHovered = false,) {
 //   // Convert the angle to radians
@@ -733,8 +1203,8 @@ function drawDatumRectangles(ctx, x, y, width, height, datums) {
 
 function drawGDAndTShape(shape) {
   let { x, y, symbol, diameter, toleranceValue, modifier, datums } = shape;
-  const rectWidth = 60;
-  const rectHeight = 20;
+  const rectWidth = 50 * scale;
+  const rectHeight = 16 * scale;
 
   x = x * scale;
   y = y * scale;
@@ -785,6 +1255,74 @@ function drawOnCanvas(x, y) {
   redrawCanvas(); // Redraw the canvas
 }
 
+function datumOnCanvas(x, y) {
+  setMode("datum");
+  const symbolD = document.getElementById("symbolInputD").value;
+  const direction = document.getElementById("directionInput").value;
+
+  const newShape = {
+    type: "datum",
+    x,
+    y,
+    symbolD,
+    direction,
+  };
+  shapes.push(newShape);
+  redrawCanvas();
+}
+
+function circleDatumOnCanvas(x, y) {
+  setMode("circleDatum");
+  const dimension = document.getElementById("circleDimension").value;
+  const symbol = document.getElementById("circleSymbol").value;
+
+  const newShape = {
+    type: "circleDatum",
+    x,
+    y,
+    dimension,
+    symbol,
+  };
+  shapes.push(newShape);
+  redrawCanvas();
+}
+
+function bubbleOnCanvas(x, y) {
+  setMode("bubble");
+  const number = document.getElementById("numberInput").value;
+
+  const newShape = {
+    type: "bubble",
+    x,
+    y,
+    number,
+  };
+  shapes.push(newShape);
+  redrawCanvas();
+}
+
+function srOnCanvas(x, y) {
+  setMode("sr");  
+  const variant = document.getElementById("variantInput").value;
+  const a = document.getElementById("aInput").value;
+  const b = document.getElementById("bInput").value;
+  const c = document.getElementById("cInput").value;
+  const d = document.getElementById("dInput").value;
+
+  const newShape = {
+    type: "sr",
+    x,
+    y,
+    variant,
+    a,
+    b,
+    c,
+    d,
+  };
+  shapes.push(newShape);
+  redrawCanvas();
+}
+
 
 function downloadCanvas() {
   const canvas = document.getElementById('cadCanvas');
@@ -793,6 +1331,7 @@ function downloadCanvas() {
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
+
 
 canvas.addEventListener("click", (e) => {
   selectedRotateShape = null; // Reset selected shape
@@ -826,6 +1365,50 @@ canvas.addEventListener("click", (e) => {
 
   redrawCanvas(); // Redraw the canvas after rotation
 });
+
+function drawCenterCross(centerX, centerY, radius) {
+  ctx.setLineDash([]); // Reset dash before drawing solid lines
+  ctx.strokeStyle = "gray";
+  ctx.lineWidth = 1;
+
+  // Dash pattern for extending lines (big dash, small dash)
+  ctx.setLineDash([15, 5, 5, 5]);
+
+  // Vertical line (excluding the small cross area)
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY - radius);
+  ctx.lineTo(centerX, centerY - 12); // Stop before the center cross
+  ctx.moveTo(centerX, centerY + 12); // Start after the center cross
+  ctx.lineTo(centerX, centerY + radius);
+  ctx.stroke();
+
+  // Horizontal line (excluding the small cross area)
+  ctx.beginPath();
+  ctx.moveTo(centerX - radius, centerY);
+  ctx.lineTo(centerX - 12, centerY); // Stop before the center cross
+  ctx.moveTo(centerX + 12, centerY); // Start after the center cross
+  ctx.lineTo(centerX + radius, centerY);
+  ctx.stroke();
+
+  // Reset dash to solid lines
+  ctx.setLineDash([]);
+
+  // Draw small cross at the center
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  ctx.moveTo(centerX - 5, centerY);
+  ctx.lineTo(centerX + 5, centerY);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY - 5);
+  ctx.lineTo(centerX, centerY + 5);
+  ctx.stroke();
+}
+
+
 
 function isPointOnShape(x, y, shape) {
   if (shape.type === "rectangle" || shape.type === "gdandt") {
@@ -891,14 +1474,14 @@ canvas.addEventListener("mousedown", (e) => {
     lastMouseY = e.clientY;
   }
 
-  if (mode === "move" && selectedShape && selectedShape.type != "gdandt") {
+  if (mode === "move" && selectedShape && selectedShape.type != "gdandt" && selectedShape.type != "datum" && selectedShape.type != "circleDatum" && selectedShape.type != "bubble" && selectedShape.type != "sr" ) {
     isMoving = true;
     moveOffsetX = x - selectedShape.startX;
     moveOffsetY = y - selectedShape.startY;
     return;
   }
 
-  else if(mode === "move" && selectedShape && selectedShape.type === "gdandt") {
+  else if(mode === "move" && selectedShape && (selectedShape.type === "gdandt" || selectedShape.type === "datum" || selectedShape.type === "circleDatum" || selectedShape.type === "bubble" || selectedShape.type === "sr")) {
     isMoving = true;
     moveOffsetX = x - selectedShape.x;
     moveOffsetY = y - selectedShape.y;
@@ -912,6 +1495,22 @@ canvas.addEventListener("mousedown", (e) => {
 
   if (mode === "gdandt") {
     drawOnCanvas(x, y);
+  }
+
+  if (mode === "datum") {
+    datumOnCanvas(x, y);
+  }
+
+  if (mode === "circleDatum") {
+    circleDatumOnCanvas(x,y);
+  }
+
+  if (mode === "bubble") {
+    bubbleOnCanvas(x,y);
+  }
+
+  if (mode === "sr") {
+    srOnCanvas(x,y);
   }
 
   if (mode === "draw") {
@@ -983,7 +1582,15 @@ canvas.addEventListener("mousemove", (e) => {
       const offsetY = dy - selectedShape.y;
       selectedShape.x += offsetX;
       selectedShape.y += offsetY;
-    } else {
+    } else if (selectedShape.type === "datum" || selectedShape.type === "circleDatum" || selectedShape.type === "bubble" || selectedShape.type === "sr") {
+      const offsetX = dx - selectedShape.x; 
+      const offsetY = dy - selectedShape.y;
+    
+      // Update the position
+      selectedShape.x += offsetX;
+      selectedShape.y += offsetY;
+    }
+    else {
       selectedShape.startX = dx;
       selectedShape.startY = dy;
     }

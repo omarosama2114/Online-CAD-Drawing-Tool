@@ -16,9 +16,9 @@ A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, 
 - **Annotate**:  
   - Add `Text`, `Arrows` and `Double-Arrows`. 
 - **Modify**:  
-  - Move, rotate, erase, pan, add center cross and interact with existing shapes.  
+  - `Move`, `Rotate`, `Erase`, `Pan`, add `Center Cross` and interact with existing shapes.  
 - **Edit**:  
-  - Undo, redo, clear the canvas, or download your drawing as an image.  
+  - `Undo`, `Redo`, `Clear` the canvas, or `Download` your drawing as an image.  
 
 ### Specialized Features  
 - **Feature Control Frames (FCFs)**:  

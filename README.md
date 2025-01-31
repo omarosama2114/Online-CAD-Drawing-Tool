@@ -10,6 +10,7 @@ A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, 
 
 ## Features  
 
+
 ### Core Functionalities  
 - **Create**:  
   - Draw geometric shapes: `Line`, `Circle`, `Arc`, and `Rectangle`.
@@ -21,7 +22,8 @@ A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, 
   - `Move`, `Rotate`, `Erase`, `Pan`, add `Center Cross` and interact with existing shapes.
      
 - **Edit**:  
-  - `Undo`, `Redo`, `Clear` the canvas, or `Download` your drawing as an image.  
+  - `Undo`, `Redo`, `Clear` the canvas, or `Download` your drawing as an image.
+     
 
 ### Specialized Features  
 - **Feature Control Frames (FCFs)**:  
@@ -37,7 +39,8 @@ A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, 
   - Label and organize drawing elements with customizable numbered callouts.
     
 - **Surface Roughness**:  
-  - Add surface quality symbols for manufacturing specifications.  
+  - Add surface quality symbols for manufacturing specifications.
+    
 
 ### Advanced Tools   
 - **Freehand Drawing**:  

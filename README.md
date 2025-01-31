@@ -4,7 +4,7 @@ A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, 
 
 ---
 
-![2D CAD Drawing Tool Screenshot](images/screenshot.png)
+![2D CAD Drawing Tool Screenshot](Images/screenshot.png)
 
 ## Features  
 

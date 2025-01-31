@@ -12,38 +12,49 @@ A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, 
 
 ### Core Functionalities  
 - **Create**:  
-  - Draw geometric shapes: `Line`, `Circle`, `Arc`, and `Rectangle`.  
+  - Draw geometric shapes: `Line`, `Circle`, `Arc`, and `Rectangle`.
+    
 - **Annotate**:  
-  - Add `Text`, `Arrows` and `Double-Arrows`. 
+  - Add `Text`, `Arrows` and `Double-Arrows`.
+    
 - **Modify**:  
-  - `Move`, `Rotate`, `Erase`, `Pan`, add `Center Cross` and interact with existing shapes.  
+  - `Move`, `Rotate`, `Erase`, `Pan`, add `Center Cross` and interact with existing shapes.
+     
 - **Edit**:  
   - `Undo`, `Redo`, `Clear` the canvas, or `Download` your drawing as an image.  
 
 ### Specialized Features  
 - **Feature Control Frames (FCFs)**:  
-  - Include geometric dimensioning and tolerancing (GD&T) specifications.  
+  - Include geometric dimensioning and tolerancing (GD&T) specifications.
+     
 - **Datum**:  
-  - Add datum references for accurate alignment and technical details.  
+  - Add datum references for accurate alignment and technical details.
+     
 - **Datum Targets**:  
-  - Specify control points on the drawing for precision.  
+  - Specify control points on the drawing for precision.
+    
 - **Number Bubbles**:  
-  - Label and organize drawing elements with customizable numbered callouts.  
+  - Label and organize drawing elements with customizable numbered callouts.
+    
 - **Surface Roughness**:  
   - Add surface quality symbols for manufacturing specifications.  
 
 ### Advanced Tools   
 - **Freehand Drawing**:  
-  - Create custom shapes and annotations effortlessly.  
+  - Create custom shapes and annotations effortlessly.
+    
 - **Scaling**:  
   - Resize shapes proportionally.
+    
 - **Panning**:  
   - Navigate the canvas and drawings.
      
 
 ### Layout and Canvas Features  
-- Organized toolbars for **Create**, **Annotate**, **Modify**, and **Edit** functionalities.  
-- Predefined templates with title blocks for professional layouts.  
+- Organized toolbars for **Create**, **Annotate**, **Modify**, and **Edit** functionalities.
+  
+- Predefined templates with title blocks for professional layouts.
+  
 - A **landscape canvas** with a 1:1.414 aspect ratio (A-series paper dimensions).  
 
 ---

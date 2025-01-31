@@ -1,11 +1,12 @@
 body {
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  background-color: #f5f5f5;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #f0f0f0;
 }
 
 .toolbar {
-  background-color: #dddddd;
+  background-color: #f0f0f0;
   color: #000000;
   padding: 20px 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -370,4 +371,39 @@ label.custom-upload-label:active {
 
 .gd-t-container .custom-dropdown select {
   width: auto;
+}
+
+.info-icon {
+  position: relative;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+  color: rgb(128, 123, 123) !important; /* Ensure light grey color */
+  text-decoration: none; /* Remove any underline */
+  font-style: normal; /* Ensure it's not inheriting link styles */
+  user-select: none; /* Prevent selection */
+}
+
+.info-image {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 150px; /* Adjust as needed */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 9999; 
+}
+
+.info-icon:hover .info-image {
+  display: block;
+}
+
+@media screen and (max-width: 1624px) { /* Adjust for your preferred breakpoint */
+  body {
+      transform: scale(0.8); /* Scale down to 80% */
+      transform-origin: top left;
+      width: 125%; /* Counteract shrinking so content still fills the screen */
+  }
 }

@@ -1,304 +1,195 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title class="MainTitle">Excedify Online CAD Tool</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-  </head>
-  <body>
-    <div class="toolbar">
-      <div class="toolbar-title">Excedify Online CAD Tool</div>
-      <div class="controls">
-        <div class="controls-group">
-          <div class="ToolbarGroup">
-            <div class="group">
-              <h4>Create</h4>
-              <div class="buttons">
-                <button onclick="setMode('line')">
-                  <i class="fas fa-minus"></i><span>Line</span>
-                </button>
-                <button onclick="setMode('circle')">
-                  <i class="far fa-circle"></i><span>Circle</span>
-                </button>
-                <button onclick="setMode('arc')">
-                  <i class="fas fa-circle-notch"></i><span>Arc</span>
-                </button>
-                <div id="arcInputs" style="display: none">
-                  <label for="startAngle">Start Angle (in degrees):</label>
-                  <input type="number" id="startAngle" value="0" />
-                  <label for="endAngle">End Angle (in degrees):</label>
-                  <input type="number" id="endAngle" value="180" />
-                </div>
-                <button onclick="setMode('rectangle')">
-                  <i class="far fa-square"></i><span>Rectangle</span>
-                </button>
-                <button onclick="setMode('draw')">
-                  <i class="fas fa-pencil-alt"></i><span>Draw</span>
-                </button>
-              </div>
-            </div>
-            <div class="group">
-              <h4>Annotate</h4>
-              <div class="buttons">
-                <button onclick="setMode('text')">
-                  <i class="fas fa-font"></i><span>Text</span>
-                </button>
-                <button onclick="setMode('arrowOne')">
-                  <i class="fas fa-long-arrow-alt-right"></i><span>Arrow</span>
-                </button>
-                <button onclick="setMode('arrowDouble')">
-                  <i class="fas fa-arrows-alt-h"></i><span>Arrow</span>
-                </button>
-              </div>
-            </div>
-            <div class="group">
-              <h4>Modify</h4>
-              <div class="buttons">
-                <button onclick="setMode('pan')">
-                  <i class="fas fa-mouse-pointer"></i><span>Pan</span>
-                </button>
-                <button onclick="setMode('move')">
-                  <i class="fas fa-arrows-alt"></i><span>Move</span>
-                </button>
-                <button onclick="setMode('rotate')">
-                  <i class="fas fa-sync-alt"></i><span>Rotate</span>
-                </button>
-                <button onclick="setMode('erase')">
-                  <i class="fas fa-eraser"></i><span>Erase</span>
-                </button>
-                <button onclick="setMode('snap')">
-                  <i class="fas fa-magnet"></i><span>Snap</span>
-                </button>
-              </div>
-            </div>
-            <div class="group">
-              <h4>Edit</h4>
-              <div class="buttons">
-                <button onclick="undo()">
-                  <i class="fas fa-undo"></i><span>Undo</span>
-                </button>
-                <button onclick="redo()">
-                  <i class="fas fa-redo"></i><span>Redo</span>
-                </button>
-                <button onclick="clearCanvas()">
-                  <i class="fas fa-trash"></i><span>Clear</span>
-                </button>
-                <button onclick="downloadCanvas()">
-                  <i class="fas fa-download"></i><span>Download</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="controls-group">
-          <h4 style="margin-top: -5px; margin-bottom: -5px;">GD&T</h4>
-          <div class="ToolbarGroup">
-            <div class="group">
-              <div id="inputArea" style="margin-right: -18px">
-                <h4>Feature Control Frame</h4>
-                <div class="gd-t-container" style="margin-top: -8px">
-                  <label for="symbolInput">Symbol: </label>
-                  <select id="symbolInput">
-                    <option value="⏤">⏤</option>
-                    <option value="⏥">⏥</option>
-                    <option value="○">○</option>
-                    <option value="⌭">⌭</option>
-                    <option value="⌒">⌒</option>
-                    <option value="⌓">⌓</option>
-                    <option value="∠">∠</option>
-                    <option value="⟂">⟂</option>
-                    <option value="∥">∥</option>
-                    <option value="⌖">⌖</option>
-                    <option value="◎">◎</option>
-                    <option value="⌯">⌯</option>
-                    <option value="↗">↗</option>
-                    <option value="⌰">⌰</option>
-                  </select>
-
-                  <label for="toleranceInput">Tolerance: </label>
-                  <select id="toleranceDiameter">
-                    <option value="">No Diameter</option>
-                    <option value="Ø">Ø</option>
-                  </select>
-                  <input
-                    type="text"
-                    id="toleranceValue"
-                    placeholder="Enter value"
-                    style="width: 100px"
-                  />
-                  <select id="toleranceModifier">
-                    <option value="">No Modifier</option>
-                    <option value="Ⓜ">Ⓜ</option>
-                    <option value="Ⓛ">Ⓛ</option>
-                  </select>
-
-                  <label for="datumInput1">Datum: </label>
-                  <input
-                    type="text"
-                    id="datumInput1"
-                    maxlength="1"
-                    style="width: 20px"
-                  />
-                  <input
-                    type="text"
-                    id="datumInput2"
-                    maxlength="1"
-                    style="width: 20px"
-                  />
-                  <input
-                    type="text"
-                    id="datumInput3"
-                    maxlength="1"
-                    style="width: 20px"
-                  />
-
-                  <button
-                    class="gdtbutton"
-                    onclick="drawOnCanvas()"
-                    style="
-                      background: #702020;
-                      color: #fff;
-                      border: none;
-                      border-radius: 5px;
-                      margin-left: 18px;
-                      margin-bottom: 11px;
-                      cursor: pointer;
-                      font-size: 17px;
-                      padding: 4px 10px;
-                      height: auto;
-                      width: auto;
-                    "
-                  >
-                    Add
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title class="MainTitle">Excedify Online CAD Tool</title>
+      <link rel="stylesheet" href="styles.css" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="controls">
+          <div class="controls-group" style="width: fit-content;">
+            <div class="ToolbarGroup" style="width: fit-content;">
+              <div class="group" style="width: fit-content;">
+                <h4>Create</h4>
+                <div class="buttons">
+                  <button onclick="setMode('line')">
+                    <i class="fas fa-minus"></i><span>Line</span>
+                  </button>
+                  <button onclick="setMode('circle')">
+                    <i class="far fa-circle"></i><span>Circle</span>
+                  </button>
+                  <button onclick="setMode('arc')">
+                    <i class="fas fa-circle-notch"></i><span>Arc</span>
+                  </button>
+                  <div id="arcInputs" style="display: none">
+                    <label for="startAngle">Start Angle (in degrees):</label>
+                    <input type="number" id="startAngle" value="0" />
+                    <label for="endAngle">End Angle (in degrees):</label>
+                    <input type="number" id="endAngle" value="180" />
+                  </div>
+                  <button onclick="setMode('rectangle')">
+                    <i class="far fa-square"></i><span>Rectangle</span>
+                  </button>
+                  <button onclick="setMode('draw')">
+                    <i class="fas fa-pencil-alt"></i><span>Draw</span>
                   </button>
                 </div>
               </div>
-            </div>
-            <br />
-            <br />
-            <br />
-            <br />
-
-            <div id="inputArea" style="margin-left: px">
-              <h4 style="margin-bottom: 12px">Datum</h4>
-              <div class="gd-t-container">
-                <label for="directionInput">Direction: </label>
-                <select id="directionInput">
-                  <option value="up">Up</option>
-                  <option value="down">Down</option>
-                  <option value="left">Left</option>
-                  <option value="right">Right</option>
-                </select>
-
-                <label for="symbolInputD">Symbol: </label>
-                <input
-                  type="text"
-                  id="symbolInputD"
-                  maxlength="1"
-                  style="width: 20px"
-                />
-
-                <button
-                  class="datumbutton"
-                  onclick="datumOnCanvas()"
-                  style="
-                    background: #702020;
-                    color: #fff;
-                    border: none;
-                    border-radius: 5px;
-                    margin-left: 18px;
-                    margin-bottom: 2px;
-                    cursor: pointer;
-                    font-size: 17px;
-                    padding: 4px 10px;
-                    height: auto;
-                    width: auto;
-                  "
-                >
-                  Add
-                </button>
+              <div class="group">
+                <h4>Annotate</h4>
+                <div class="buttons">
+                  <button onclick="setMode('text')">
+                    <i class="fas fa-font"></i><span>Text</span>
+                  </button>
+                  <button onclick="setMode('arrowOne')">
+                    <i class="fas fa-long-arrow-alt-right"></i><span>Arrow</span>
+                  </button>
+                  <button onclick="setMode('arrowDouble')">
+                    <i class="fas fa-arrows-alt-h"></i><span>Arrow</span>
+                  </button>
+                </div>
               </div>
+              <div class="group">
+                <h4>Modify</h4>
+                <div class="buttons">
+                  <button onclick="setMode('pan')">
+                    <i class="fas fa-mouse-pointer"></i><span>Pan</span>
+                  </button>
+                  <button onclick="setMode('move')">
+                    <i class="fas fa-arrows-alt"></i><span>Move</span>
+                  </button>
+                  <button onclick="setMode('rotate')">
+                    <i class="fas fa-sync-alt"></i><span>Rotate</span>
+                  </button>
+                  <button onclick="setMode('erase')">
+                    <i class="fas fa-eraser"></i><span>Erase</span>
+                  </button>
+                  <button onclick="setMode('snap')">
+                    <i class="fas fa-crosshairs"></i><span>Cross</span>
+                  </button>
+                </div>
               </div>
-
-              <div id="inputArea" style="margin-left: 30px">
-                <h4 style="margin-bottom: 12px">Datum Target</h4>
-                <div class="gd-t-container">
-                  <label for="circleDimension">Dimension: </label>
-                  <input
-                    type="text"
-                    id="circleDimension"
-                    placeholder="Enter value"
-                    style="width: 100px"
-                  />
-
-                  <label for="circleSymbol">Symbol: </label>
-                  <input
-                    type="text"
-                    id="circleSymbol"
-                    maxlength="1"
-                    style="width: 20px"
-                  />
-                  <button
-                    class="circleDatumbutton"
-                    onclick="circleDatumOnCanvas()"
-                    style="
-                      background: #702020;
-                      color: #fff;
-                      border: none;
-                      border-radius: 5px;
-                      margin-left: 18px;
-                      margin-bottom: 2px;
-                      cursor: pointer;
-                      font-size: 17px;
-                      padding: 4px 10px;
-                      height: auto;
-                      width: auto;
-                    "
-                  >
-                    Add
+              <div class="group" style="margin-right: 0px;">
+                <h4>Edit</h4>
+                <div class="buttons">
+                  <button onclick="undo()">
+                    <i class="fas fa-undo"></i><span>Undo</span>
+                  </button>
+                  <button onclick="redo()">
+                    <i class="fas fa-redo"></i><span>Redo</span>
+                  </button>
+                  <button onclick="clearCanvas()">
+                    <i class="fas fa-trash"></i><span>Clear</span>
+                  </button>
+                  <button onclick="downloadCanvas()">
+                    <i class="fas fa-download"></i><span>Download</span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="controls-group">
+          <div class="controls-group" style="width: 1658px;">
             <div class="ToolbarGroup">
               <div class="group">
-                <h4>Insert Background</h4>
-                <label for="uploadImage" class="custom-upload-label"
-                  >Upload Image <i class="fas fa-upload"></i>
-                </label>
-                <input
-                  type="file"
-                  id="uploadImage"
-                  accept="image/*"
-                  onchange="setBackground(event)"
-                  class="custom-upload-button"
-                />
-              </div>
-  
-              <div class="group">
-                <h4>Line Format</h4>
-                <div class="custom-dropdown" style="margin-top: 0px">
-                  <select id="lineStyle" onchange="setLineStyle(this.value)">
-                    <option value="default">Continous Line</option>
-                    <option value="thin">Continuous Line (Thin)</option>
-                    <option value="dashed">Dashed Line</option>
-                    <option value="thin-dashed">Dashed Line (Thin)</option>
-                    <option value="center">Center Line</option>
-                  </select>
+                <div id="inputArea" style="margin-right: -18px">
+                  <h4> Feature Control Frame
+                    <span class="info-icon">ℹ️
+                      <img class="info-image" style="width: 350px;" src="Images/fcf.jpg" alt="Info Image">
+                    </span>
+                  </h4>
+                  <div class="gd-t-container" style="margin-top: -8px">
+                    <label for="symbolInput">Symbol: </label>
+                    <select id="symbolInput">
+                      <option value="⏤">⏤</option>
+                      <option value="⏥">⏥</option>
+                      <option value="○">○</option>
+                      <option value="⌭">⌭</option>
+                      <option value="⌒">⌒</option>
+                      <option value="⌓">⌓</option>
+                      <option value="∠">∠</option>
+                      <option value="⟂">⟂</option>
+                      <option value="∥">∥</option>
+                      <option value="⌖">⌖</option>
+                      <option value="◎">◎</option>
+                      <option value="⌯">⌯</option>
+                      <option value="↗">↗</option>
+                      <option value="⌰">⌰</option>
+                    </select>
+
+                    <label for="toleranceInput"> &nbsp; Tolerance </label>
+                    <select id="toleranceDiameter">
+                      <option value="">No Diameter</option>
+                      <option value="Ø">Ø</option>
+                    </select>
+                    <input
+                      type="text"
+                      id="toleranceValue"
+                      placeholder="Enter value"
+                      style="width: 100px"
+                    />
+                    <select id="toleranceModifier">
+                      <option value="">No Modifier</option>
+                      <option value="Ⓜ">Ⓜ</option>
+                      <option value="Ⓛ">Ⓛ</option>
+                    </select>
+
+                    <label for="datumInput1"> &nbsp; Datum </label>
+                    <input
+                      type="text"
+                      id="datumInput1"
+                      maxlength="1"
+                      style="width: 20px"
+                    />
+                    <input
+                      type="text"
+                      id="datumInput2"
+                      maxlength="1"
+                      style="width: 20px"
+                    />
+                    <input
+                      type="text"
+                      id="datumInput3"
+                      maxlength="1"
+                      style="width: 20px"
+                    />
+
+                    <button
+                      class="gdtbutton"
+                      onclick="drawOnCanvas()"
+                      style="
+                        background: #702020;
+                        color: #fff;
+                        border-radius: 4px;
+                        margin-left: 10px;
+                        margin-bottom: 15px;
+                        margin-top: 15px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        font-weight: bold;
+                        font-family: 'Poppins', sans-serif;
+                        padding: 4px 12px;
+                        height: auto;
+                        width: auto;"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <div class="group" style="margin-left: 50px;">
-                <h4 style="margin-bottom: 14px;">Number Bubble</h4>
+                <h4 style="margin-bottom: 14px;"> Number Bubble 
+                  <span class="info-icon">ℹ️
+                    <img class="info-image" src="Images/Bubble.jpg" alt="Info Image">
+                  </span>
+                </h4>
                 <div class="gd-t-container">
                 <label for="symbolInputD">Number: </label>
                 <input
@@ -313,92 +204,207 @@
                   onclick="bubbleOnCanvas()"
                   style="
                     background: #702020;
-                    color: #fff;
-                    border: none;
-                    border-radius: 5px;
-                    margin-left: 18px;
-                    margin-bottom: 2px;
-                    cursor: pointer;
-                    font-size: 17px;
-                    padding: 4px 10px;
-                    height: auto;
-                    width: auto;
-                  "
+                      color: #fff;
+                      border-radius: 4px;
+                      margin-left: 10px;
+                      margin-bottom: 2.5px;
+                      margin-top: 2px;
+                      cursor: pointer;
+                      font-size: 14px;
+                      font-weight: bold;
+                      font-family: 'Poppins', sans-serif;
+                      padding: 4px 12px;
+                      height: auto;
+                      width: auto;"
                 >
                   Add
                 </button>
               </div> 
             </div>
-                <div class="group">
-                  <h4>Surface Roughness</h4>
+              <br />
+              <br />
+              <br />
+              <br />
+
+                <div id="inputArea" style="margin-left: 30px">
+                  <h4 style="margin-bottom: 12px;"> Datum Target
+                    <span class="info-icon">ℹ️
+                      <img class="info-image" style="width: 100px;" src="Images/target.jpg" alt="Info Image">
+                    </span>
+                  </h4>
                   <div class="gd-t-container">
-                  <label for="variantInput">Variant: </label>
-                  <select id="variantInput">
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                  </select>
-                  <label for="aInput">a: </label>
-                  <input
-                    type="text"
-                    id="aInput"
-                    maxlength="4"
-                    style="width: 20px"
-                  />
-                  <label for="bInput">b: </label>
-                  <input
-                    type="text"
-                    id="bInput"
-                    maxlength="4"
-                    style="width: 20px"
-                  />
-                  <label for="cInput">c: </label>
-                  <input
-                    type="text"
-                    id="cInput"
-                    maxlength="4"
-                    style="width: 20px"
-                  />
-                  <label for="dInput">d: </label>
-                  <input
-                    type="text"
-                    id="dInput"
-                    maxlength="4"
-                    style="width: 20px"
-                  />
-                  <button
-                    class="srButton"
-                    onclick="srOnCanvas()"
-                    style="
-                      background: #702020;
-                      color: #fff;
-                      border: none;
-                      border-radius: 5px;
-                      margin-left: 18px;
-                      margin-bottom: 2px;
-                      cursor: pointer;
-                      font-size: 17px;
-                      padding: 4px 10px;
-                      height: auto;
-                      width: auto;
-                    "
+                    <label for="circleDimension">Dimension </label>
+                    <input
+                      type="text"
+                      id="circleDimension"
+                      placeholder="Enter value"
+                      style="width: 100px"
+                    />
+
+                    <label for="circleSymbol"> &nbsp; Symbol </label>
+                    <input
+                      type="text"
+                      id="circleSymbol"
+                      maxlength="1"
+                      style="width: 20px"
+                    />
+                    <button
+                      class="circleDatumbutton"
+                      onclick="circleDatumOnCanvas()"
+                      style="
+                        background: #702020;
+                        color: #fff;
+                        border-radius: 4px;
+                        margin-left: 10px;
+                        margin-bottom: 5px;
+                        margin-top: 5px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        font-weight: bold;
+                        font-family: 'Poppins', sans-serif;
+                        padding: 4px 12px;
+                        height: auto;
+                        width: auto;"
                     >
                       Add
-                  </button>  
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="controls-group" style="width: 1658px;">
+              <div class="ToolbarGroup">
+                <div class="group">
+                  <h4>Background</h4>
+                  <label for="uploadImage" class="custom-upload-label"
+                    >Upload Image  &nbsp; <i class="fas fa-upload"></i>
+                  </label>
+                  <input
+                    type="file"
+                    id="uploadImage"
+                    accept="image/*"
+                    onchange="setBackground(event)"
+                    class="custom-upload-button"
+                  />
+                </div>
+    
+                <div class="group" style="margin-right: 150px;">
+                  <h4>Line Format</h4>
+                  <div class="custom-dropdown" style="margin-top: 0px">
+                    <select id="lineStyle" onchange="setLineStyle(this.value)">
+                      <option value="default">Continous Line</option>
+                      <option value="thin">Continuous Line (Thin)</option>
+                      <option value="dashed">Dashed Line</option>
+                      <option value="thin-dashed">Dashed Line (Thin)</option>
+                      <option value="center">Center Line</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="inputArea">
+                  <h4 style="margin-bottom: 12px;"> Datum
+                    <span class="info-icon">ℹ️
+                      <img class="info-image" style="width: 50px;" src="Images/datum.jpg" alt="Info Image">
+                    </span>
+                  </h4>
+                  <div class="gd-t-container">
+                    <label for="directionInput">Direction </label>
+                    <select id="directionInput">
+                      <option value="up">Up</option>
+                      <option value="down">Down</option>
+                      <option value="left">Left</option>
+                      <option value="right">Right</option>
+                    </select>
+  
+                    <label for="symbolInputD">&nbsp; Symbol </label>
+                    <input
+                      type="text"
+                      id="symbolInputD"
+                      maxlength="1"
+                      style="width: 20px"
+                    />
+  
+                    <button
+                      class="datumbutton"
+                      onclick="datumOnCanvas()"
+                      style="
+                        background: #702020;
+                          color: #fff;
+                          border-radius: 4px;
+                          margin-left: 10px;
+                          margin-bottom: 5px;
+                          margin-top: 5px;
+                          cursor: pointer;
+                          font-size: 14px;
+                          font-weight: bold;
+                          font-family: 'Poppins', sans-serif;
+                          padding: 4px 12px;
+                          height: auto;
+                          width: auto;"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  </div>
+                  <div class="group" style="margin-right: 0px; margin-left: 50px;">
+                    <h4>Surface Roughness 
+                      <span class="info-icon">ℹ️
+                        <img class="info-image" src="Images/SR.jpg" alt="Info Image">
+                      </span>
+                    </h4>
+                    <div class="gd-t-container">
+                      <label for="variantInput">Variant </label>
+                      <select id="variantInput" onchange="updateImage()">
+                        <option value="Images/variantA.png" data-img="variantA.png">A</option>
+                        <option value="Images/variantB.png" data-img="variantB.png">B</option>
+                        <option value="Images/variantC.jpg" data-img="variantC.jpg">C</option>
+                      </select>
+                    
+                      <label for="aInput">&nbsp;a </label>
+                      <input type="text" id="aInput" maxlength="4" style="width: 20px" />
+                      
+                      <label for="bInput">&nbsp;b </label>
+                      <input type="text" id="bInput" maxlength="4" style="width: 20px" />
+                      
+                      <label for="cInput">&nbsp;c </label>
+                      <input type="text" id="cInput" maxlength="4" style="width: 20px" />
+                      
+                      <label for="dInput">&nbsp;d </label>
+                      <input type="text" id="dInput" maxlength="4" style="width: 20px" />
+                      
+                      <br>
+                      <img id="variantImage" src="Images/variantA.png" alt="Selected Variant" width="40">
+                      
+                      <button class="srButton" onclick="srOnCanvas()" style="
+                        background: #702020;
+                        color: #fff;
+                        border-radius: 4px;
+                        margin-left: 10px;
+                        margin-bottom: 7px;
+                        margin-top: 5px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        font-weight: bold;
+                        font-family: 'Poppins', sans-serif;
+                        padding: 4px 12px;
+                        height: auto;
+                        width: auto;">
+                        Add
+                      </button>
+                    </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
       </div>
-    </div>
 
-    <canvas
-      id="cadCanvas"
-      width="1000"
-      height="625"
-      style="border: 1px solid black"
-    ></canvas>
-    <script src="script.js"></script>
-  </body>
-</html>
+      <canvas
+        id="cadCanvas"
+        width="1000"
+        height="625"
+        style="border: 1px solid black"
+      ></canvas>
+      <script src="script.js"></script>
+    </body>
+  </html>

@@ -1,6 +1,8 @@
 # 2D Online CAD Drawing Tool  
 
-A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, **CSS**, and an **HTML Canvas**. This tool provides an intuitive interface for creating, annotating, and modifying technical drawings directly in the browser. Designed for seamless integration into the **Excedify** website, it offers essential CAD functionalities for engineers, designers, and students.  
+A lightweight **2D online CAD drawing tool** built with **Vanilla JavaScript**, **CSS**, and an **HTML Canvas**. This tool provides an intuitive interface for creating, annotating, and modifying technical drawings directly in the browser. 
+
+Designed for seamless integration into the **Excedify** website, it offers essential CAD functionalities for engineers, designers, and students.  
 
 ---
 
